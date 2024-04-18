@@ -50,9 +50,9 @@
 
 * TODO:
 
-    1. Modify redis_client to add all commands related to redis sorted sets
+    1. ~~Modify redis_client to add all commands related to redis sorted sets~~
 
-    2. Loan, Extract, Transform the csv device metrics into a pandas dataframe and write to redis.
+    2. ~~Loan, Extract, Transform the csv device metrics into a pandas dataframe and write to redis~~
 
     3. Define data models and add relevant endpoints to the FASTAPI server.
 
