@@ -32,7 +32,7 @@
 
     * Load the csv into a pandas dataframe first and sort by column(sts)
 
-    * Iterate over each row/datapoint for a particular device_id and batch the records until when the time difference between the first_timestamp and the current_timestamp is >=3 secs. Avg out latitute, longitude, speed.
+    * Batch the data points say around 20 records in a single batch and write the aggregted data point instead.
     
     * Take that result and dump into redis sorted sets so that we have stats in increasing order of timestamps and can efficiently query for start, end, latest timestamps. They key would be of the following form:
 
