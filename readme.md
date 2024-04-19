@@ -54,11 +54,11 @@
 
     2. ~~Loan, Extract, Transform the csv device metrics into a pandas dataframe and write to redis~~
 
-    3. Define data models and add relevant endpoints to the FASTAPI server.
+    3. ~~Define data models and add relevant endpoints to the FASTAPI server.~~
 
-    4. Add relevant functionality to the corresponding endpoints.
+    4. ~~Add relevant functionality to the corresponding endpoints.~~
 
-    5. Testing and Validation.
+    5. ~~Testing and Validation.~~
 
     6. Fin
 

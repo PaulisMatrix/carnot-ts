@@ -73,6 +73,7 @@ class Worker:
                 self._add_to_redis(key=cur_device_id, mapping=mapping)
 
                 # reset the batch data
+                # del batch_data[cur_device_id] also works
                 batch_data[cur_device_id] = {
                     "lat_sum": 0,
                     "lon_sum": 0,
