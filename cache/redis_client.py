@@ -45,24 +45,19 @@ class RedisClient(object):
         min_score: Union[float, str],
         max_score: Union[float, str],
         withscores: bool = False,
+        offset: Union[int, None] = None,
+        limit: Union[int, None] = None,
     ) -> list:
         return self.connection.zrangebyscore(
-            name=key, min=min_score, max=max_score, withscores=withscores
+            name=key,
+            min=min_score,
+            max=max_score,
+            withscores=withscores,
+            start=offset,
+            num=limit,
         )
 
 
 if __name__ == "__main__":
-    redis_client = RedisClient()
-    redis_client.zadd("players", {"player1": 56})
-    redis_client.zadd("players", {"player2": 100})
-    redis_client.zadd("players", {"player3": 120})
-
-    # redis_client.zrem("players", ["player1", "player2"])
-    # output = redis_client.zrangebyscore("players", "-inf", "inf")
-    # get the last and first element in the sorted set using index
-    last_location = redis_client.zrange(
-        key="players", start_idx=-1, end_idx=-1, withscores=True
-    )
-    first_location = redis_client.zrange(
-        key="players", start_idx=0, end_idx=0, withscores=True
-    )
+    # redis_client = RedisClient()
+    pass

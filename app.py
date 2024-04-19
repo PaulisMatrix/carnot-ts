@@ -1,4 +1,4 @@
-from typing import Any, List, Dict
+from typing import Any, List, Dict, Union
 
 import uvicorn
 from fastapi import FastAPI, status, Depends
@@ -12,6 +12,9 @@ from models import ErrorResponse, DeviceInfo, DeviceLocation
 
 app = FastAPI(title="carnot-ts")
 
+MAX_PAGE_SIZE = 15
+DEFAULT_PAGE_SIZE = 100
+MAX_PAGE_NUMBER = 10
 
 app.add_middleware(
     CORSMiddleware,
@@ -101,11 +104,14 @@ async def check_key_cardinality(
     device_id: float,
     iso_start_time: str,
     iso_end_time: str,
+    page_size: Union[int, None] = 0,
+    page_number: Union[int, None] = 0,
     redis_cache: RedisClient = Depends(RedisClient),
 ):
     unix_start_time_secs = convert_to_secs(iso_datetime_str=iso_start_time)
     unix_end_time_secs = convert_to_secs(iso_datetime_str=iso_end_time)
 
+    # validate start and end timestamps
     if (not unix_start_time_secs) or (not unix_end_time_secs):
         error_resp = ErrorResponse(
             status=status.HTTP_400_BAD_REQUEST,
@@ -116,17 +122,47 @@ async def check_key_cardinality(
             status_code=status.HTTP_400_BAD_REQUEST,
         )
 
+    # validate page_size and page_number
+    if page_size < 0 or page_size > MAX_PAGE_SIZE:
+        error_resp = ErrorResponse(
+            status=status.HTTP_400_BAD_REQUEST,
+            info="page size should be within [0,15] range",
+        )
+        return JSONResponse(
+            content=jsonable_encoder(error_resp),
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if page_number < 0 or page_number > MAX_PAGE_NUMBER:
+        error_resp = ErrorResponse(
+            status=status.HTTP_400_BAD_REQUEST,
+            info="page number should be within [0,10] range",
+        )
+        return JSONResponse(
+            content=jsonable_encoder(error_resp),
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # handle defaults
+    if page_size == 0:
+        page_size = DEFAULT_PAGE_SIZE
+
+    limit = page_size
+    offset = page_number * page_size
+
     location_points = redis_cache.zrangebyscore(
         key=device_id,
         min_score=unix_start_time_secs,
         max_score=unix_end_time_secs,
         withscores=True,
+        limit=limit,
+        offset=offset,
     )
 
     if len(location_points) == 0:
         error_resp = ErrorResponse(
             status=status.HTTP_404_NOT_FOUND,
-            info="invalid device id or start and end timestamp out of range.",
+            info="invalid device id or start and end timestamp out of range or no records in given page number.",
         )
         return JSONResponse(
             content=jsonable_encoder(error_resp), status_code=status.HTTP_404_NOT_FOUND
