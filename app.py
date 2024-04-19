@@ -26,13 +26,21 @@ app.add_middleware(
 
 
 @app.get(
-    "/latest-device-info/",
+    "/devices/{device_id}/latest-info/",
     response_model=DeviceInfo,
     status_code=status.HTTP_200_OK,
+    tags=["devices"],
+    summary="get device latest information.",
 )
-async def check_key_cardinality(
+async def get_latest_device_info(
     device_id: float, redis_cache: RedisClient = Depends(RedisClient)
 ) -> Any:
+    """
+    Get the latest information of the Device.
+
+    - device_id(str): Valid device id whos information you're trying to retreive.
+
+    """
     latest_info = redis_cache.zrange(
         key=device_id, start_idx=-1, end_idx=-1, withscores=True
     )
@@ -53,13 +61,21 @@ async def check_key_cardinality(
 
 
 @app.get(
-    "/location-coordinates/",
+    "/devices/{device_id}/distance-travelled/",
     response_model=DeviceLocation,
     status_code=status.HTTP_200_OK,
+    tags=["devices"],
+    summary="get device start and end location of the distance travelled.",
 )
-async def check_key_cardinality(
+async def get_device_distance_travelled(
     device_id: float, redis_cache: RedisClient = Depends(RedisClient)
-):
+) -> Any:
+    """
+    Get the start location(lat, long) and end location(lat, long) of distance travelled by the Device.
+
+    - device_id(str): Valid device id whos information you're trying to retreive.
+
+    """
     start_location = redis_cache.zrange(
         key=device_id, start_idx=0, end_idx=0, withscores=True
     )
@@ -96,18 +112,31 @@ async def check_key_cardinality(
 
 
 @app.get(
-    "/location-points/",
+    "/devices/{device_id}/locations/",
     response_model=Dict[str, List[DeviceInfo]],
     status_code=status.HTTP_200_OK,
+    tags=["devices"],
+    summary="get device locations given start and end timestamp",
 )
-async def check_key_cardinality(
+async def get_device_locations(
     device_id: float,
     iso_start_time: str,
     iso_end_time: str,
     page_size: Union[int, None] = 0,
     page_number: Union[int, None] = 0,
     redis_cache: RedisClient = Depends(RedisClient),
-):
+) -> Any:
+    """
+    Get the location points(lat, long) of the Device given start and end timestamp.
+
+    - device_id(str): Valid device id whos information you're trying to retreive.
+    - start_time(str): Valid start timestamp in ISO format.
+    - end_time(str): Valid end timestamp in ISO format.
+    - page_size(int): Number of records to get in a single page.
+    - page_number(int): Page number from which to get the records.
+
+    """
+
     unix_start_time_secs = convert_to_secs(iso_datetime_str=iso_start_time)
     unix_end_time_secs = convert_to_secs(iso_datetime_str=iso_end_time)
 
