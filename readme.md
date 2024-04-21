@@ -4,8 +4,8 @@
 
 * The metrics collected look something like this:
 
-    id      latitute    longitude   sts(timestamp)        speed
     ```
+    id      latitute    longitude   sts(timestamp)        speed
     25029   27.8779583  76.06095886 2021-10-23T14:08:02Z    0
     25029   27.8779583  76.06095886 2021-10-23T14:08:06Z    0
     25029   27.8779583  76.06095886 2021-10-23T14:08:04Z    0
@@ -20,13 +20,19 @@
 
 * Requirements:
 
-    * An API that takes device ID and returns device’s latest information in response.
+    *   An API that takes device ID and returns device’s latest information in response.
 
-    * An API that takes device ID and returns start location & end location for that device.
+        `http://localhost:3001/devices/6888.0/latest-info/`
+
+    *   An API that takes device ID and returns start location & end location for that device.
         Location should be (lat, lon) tuple.
+
+        `http://localhost:3001/devices/6888.0/distance-travelled/`
     
-    * An API that takes in device ID, start time & end time and returns all the location
+    *   An API that takes in device ID, start time & end time and returns all the location
         points as list of latitude, longitude & time stamp.
+
+        `http://localhost:3001/devices/6888.0/locations/?iso_start_time=2021-10-23T18:00:54Z&iso_end_time=2021-10-23T19:59:36Z&page_size=10&page_number=1`
 
 * Analysis steps:
 
@@ -44,12 +50,12 @@
 
         `ZRANGEBYSCORE 25029 start_timestamp end_timestamp`
 
-        since its a sorted set, one index will be min_timestamp, last index will be max_timestamp
+        since its a sorted set, first index will be min_timestamp, last index will be max_timestamp
     
     * Use FastAPI for the server having the corresponding endpoints.
 
 * Docs can be accessed here: `http://0.0.0.0:3001/docs` or `http://0.0.0.0:3001/redoc`
 
-*  
+* Detailed project walkthrough: https://drive.google.com/file/d/1IRww06QAFzZx-vz6cfDbYIWOT6aN5uUD/view
 
 
