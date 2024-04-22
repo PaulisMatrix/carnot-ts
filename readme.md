@@ -58,4 +58,9 @@
 
 * Detailed project walkthrough: https://drive.google.com/file/d/1IRww06QAFzZx-vz6cfDbYIWOT6aN5uUD/view
 
+* TODO:
+   * Explore redistimeseries module:
+     1. https://redis.io/blog/unlocking-timeseries-data-redis/
+     2. https://redis.io/docs/latest/develop/data-types/timeseries/
+   * 
 
